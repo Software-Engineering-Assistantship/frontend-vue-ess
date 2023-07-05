@@ -17,10 +17,12 @@
 </template>
 
 <script lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { useApiService } from '../services/apiService';
 
 export default {
   setup() {
+    const { fetchData } = useApiService();
     const newTask = ref<string>('');
     const tasks = ref<string[]>([]);
 
@@ -34,6 +36,16 @@ export default {
     const removeTask = (index: number) => {
       tasks.value.splice(index, 1);
     };
+
+    onMounted(async () => {
+      try {
+        const user = await fetchData();
+        user.name = user.name +"'s birthday" 
+        tasks.value.push(user.name);
+      } catch (error) {
+        console.error('Erro ao buscar usuário:', error);
+      }
+    });
 
     return {
       newTask,
